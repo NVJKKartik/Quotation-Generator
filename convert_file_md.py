@@ -310,12 +310,21 @@ def convert_md_to_pdf(md_path, output_path):
         else:
             cleaned_md_content = md_content # Use original if not a fenced block
         
+        # --- DEBUG PRINT for cleaned_md_content --- #
+        print("--- Cleaned MD Content for Markdown Parser ---")
+        print(repr(cleaned_md_content)) # Use repr() to see exact string with newlines
+        print("---------------------------------------------")
+
         # Convert cleaned markdown to an HTML snippet
         html_snippet = markdown.markdown(cleaned_md_content, extensions=['tables', 'fenced_code'])
 
-        # --- DEBUG PRINT --- #
+        # Prepend letterhead spacer div to the HTML snippet
+        letterhead_spacer_html = "<div style=\"height: 3cm;\"></div>" # Approx 2cm spacer
+        html_snippet_with_spacer = letterhead_spacer_html + html_snippet
+
+        # --- DEBUG PRINT for HTML snippet --- #
         print("--- Generated HTML Snippet for PDF Conversion ---")
-        print(html_snippet)
+        print(html_snippet_with_spacer) # Print the one with the spacer
         print("--------------------------------------------------")
 
         # Define CSS for styling
@@ -350,7 +359,7 @@ def convert_md_to_pdf(md_path, output_path):
         # However, applying body styles from CSS might need it.
         # Let's try with a minimal body wrapper.
         html_for_fitz = f"""<!DOCTYPE html><html><head><meta charset="utf-8"></head>
-        <body>{html_snippet}</body></html>"""
+        <body>{html_snippet_with_spacer}</body></html>""" # Use the snippet with spacer
 
         # The 'archive' parameter is for resource management (e.g., external images referenced in HTML)
         # For self-contained HTML like ours, None should be appropriate.

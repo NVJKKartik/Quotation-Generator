@@ -264,13 +264,19 @@ def load_prompt_templates():
 
 
 
-    To:
-    The Superintendent
-    Govt Ayurved Hospital
-    Raipur
+    To:<br>
+    The Head of the Dept<br>
+    St Joseph dental College<br>
+    Eluru.
+
     Sub: Supply & Pricing of lab requirements
+
     Respected Sir,
+
     We are pleased to inform you best possible rates for the following items.
+    
+    <!--- Leave Space for table rendering in html -->
+
     | Serial No. | Item                      | Price | GST | Final Amount |
     |------------|---------------------------|-------|-----|--------------|
     | 1          | RA-kit                    | 510   | 0%  | 510          |
@@ -281,6 +287,7 @@ def load_prompt_templates():
     | 6          | A.S.O.                    | 1150  | 12% | 1288         |
     | 7          | Lancet                    | 85    | 12% | 95.2         |
 
+    <!--- Leave Space for table rendering in html -->
 
     Terms and conditions:
     <ul>
@@ -289,9 +296,9 @@ def load_prompt_templates():
     <li>100% Payment in advanced</li>
     </ul>
 
-    Thanks and Regards
-    Diagnoedge
-    Charoda
+    Thanks and Regards <br>
+    Diagnoedge <br>
+    Charoda <br>
     ```
     
     ---END OF EXAMPLE---
@@ -302,11 +309,12 @@ def load_prompt_templates():
     1. DO NOT include any comments, notes, or explanations in brackets within the final document.
     2. Leave space for letterhead (as shown with the HTML comment and blank lines in the example).
     3. The document should NOT start with a Markdown heading (e.g., ##).
-    4. By default, use "Diagnoedge" as the sender/company name unless clearly different in the document.
+    4. By default, use "Diagnoedge" as the sender/company name and "Charoda" as the location unless clearly different in the document.
     5. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
     6. Ensure all itemized details, terms, and totals are captured accurately.
     7. For 'Terms and conditions', format them as an HTML unordered list: start with <code>&lt;ul&gt;</code>, end with <code>&lt;/ul&gt;</code>, and wrap each item in <code>&lt;li&gt;...&lt;/li&gt;</code> tags, exactly as shown in the example.
-    8. For concluding remarks like 'Thanks and Regards', ensure each part (e.g., name, location) is on its own separate new line, as shown in the example.
+    8. For concluding remarks like 'Thanks and Regards', ensure each part (e.g., name, location) is on its own separate new line, using <code>&lt;br&gt;</code> tags for line breaks within a paragraph block if needed, as shown in the example.
+    9. For address blocks (like the recipient 'To:' section), use <code>&lt;br&gt;</code> tags at the end of each line (except the last in the block) to ensure they appear on separate lines, as shown in the example. Separate distinct blocks like 'To:', 'Sub:', and 'Respected Sir,' with blank lines to treat them as separate paragraphs.
     
     The output must be a clean, professional Markdown document, ready for PDF conversion. Output only the Markdown document itself.
     """
