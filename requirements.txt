@@ -5,3 +5,4 @@ docx2pdf
 python-docx
 PyMuPDF
 markdown 
+dotenv
