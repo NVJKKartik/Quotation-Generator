@@ -311,12 +311,12 @@ def load_prompt_templates():
     3. The document should NOT start with a Markdown heading (e.g., ##).
     4. By default, use "Diagnoedge" as the sender/company name and "Charoda" as the location unless clearly different in the document.
     5. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
-    6. Ensure all itemized details, terms, and totals are captured accurately.
-    7. For 'Terms and conditions', format them as an HTML unordered list: start with <code>&lt;ul&gt;</code>, end with <code>&lt;/ul&gt;</code>, and wrap each item in <code>&lt;li&gt;...&lt;/li&gt;</code> tags, exactly as shown in the example.
+    6. Ensure all itemized details, terms, and totals are captured accurately. Table cells should contain plain text only; do NOT use <code>&lt;br&gt;</code> tags or other HTML within table cells. Line breaks within table cells are not supported by standard Markdown tables.
+    7. Do not forget to add the 'Terms and conditions' section ever, if user didn't mention any then use the ones in template provided to you unless user says not to add it. For 'Terms and conditions', format them as an HTML unordered list: start with <code>&lt;ul&gt;</code>, end with <code>&lt;/ul&gt;</code>, and wrap each item in <code>&lt;li&gt;...&lt;/li&gt;</code> tags, exactly as shown in the example.
     8. For concluding remarks like 'Thanks and Regards', ensure each part (e.g., name, location) is on its own separate new line, using <code>&lt;br&gt;</code> tags for line breaks within a paragraph block if needed, as shown in the example.
     9. For address blocks (like the recipient 'To:' section), use <code>&lt;br&gt;</code> tags at the end of each line (except the last in the block) to ensure they appear on separate lines, as shown in the example. Separate distinct blocks like 'To:', 'Sub:', and 'Respected Sir,' with blank lines to treat them as separate paragraphs.
     
-    The output must be a clean, professional Markdown document, ready for PDF conversion. Output only the Markdown document itself.
+    The output must be ONLY the clean, professional Markdown document itself, starting with the <code>&lt;!-- Leave space for letterhead --&gt;</code> comment and enclosed in <code>```markdown ... ```</code> fences, as shown in the example. Do not include any conversational text or explanations before or after the Markdown block.
     """
     st.session_state['bill_extraction_prompt_template'] = """
     Analyze the uploaded document (image or PDF) of a handwritten {doc_type_name}.
@@ -331,12 +331,12 @@ def load_prompt_templates():
     1. DO NOT include any comments, notes, or explanations in brackets within the final document.
     2. Don't have any heading for the document. It should never start with "##" or any other heading.
     3. Leave space for letterhead.
-    4. By default, use "Diagnoedge" as the sender/company name unless clearly different in the document.
+    4. By default, use "Diagnoedge" as the sender/company name and "Charoda" as the location unless clearly different in the document.
     5. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
     6. Format currency values consistently (e.g., ₹500.00 or Rs. 500).
-    7. Include proper headers and document structure.
+    7. Include proper headers and document structure. Table cells should contain plain text only; do NOT use <code>&lt;br&gt;</code> tags or other HTML within table cells.
     
-    The output should be a clean, professional document ready for PDF conversion. Output only the Markdown document.
+    The output must be ONLY the clean, professional Markdown document itself. Do not include any conversational text or explanations before or after the Markdown block.
     """
 
 def main():

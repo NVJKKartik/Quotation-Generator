@@ -296,20 +296,58 @@ def convert_md_to_pdf(md_path, output_path):
         with open(md_path, 'r', encoding='utf-8') as file:
             md_content = file.read()
 
-        # Clean md_content: Remove surrounding triple-backtick code fences if present
-        stripped_md = md_content.strip()
-        if stripped_md.startswith("```") and stripped_md.endswith("```"):
-            lines = stripped_md.split('\n')
-            # Remove the first line (e.g., ```markdown or ```)
-            if lines:
-                lines.pop(0)
-            # Remove the last line if it's just ```
-            if lines and lines[-1].strip() == "```":
-                lines.pop(-1)
-            cleaned_md_content = "\n".join(lines)
-        else:
-            cleaned_md_content = md_content # Use original if not a fenced block
+        # --- Enhanced logic to find and extract the main Markdown block ---
+        cleaned_md_content = md_content # Default to original content
         
+        # Try to find the start of a potential ```markdown block or ``` block
+        block_start_variants = ["```markdown", "```"]
+        actual_start_marker = None
+        start_index = -1
+
+        for marker in block_start_variants:
+            idx = md_content.find(marker)
+            if idx != -1:
+                # Ensure we don't select a marker that's part of a larger word or inside another block
+                # This is a simple check; more complex scenarios might need regex
+                if idx == 0 or md_content[idx-1].isspace(): 
+                    start_index = idx + len(marker) # Start after the marker
+                    actual_start_marker = marker
+                    break
+        
+        if actual_start_marker: # If we found a start marker
+            # Find the corresponding end marker ```, searching from after the start marker
+            end_index = md_content.rfind("```", start_index)
+            
+            if end_index != -1:
+                # Extract the content between the markers
+                extracted_block = md_content[start_index:end_index].strip()
+                cleaned_md_content = extracted_block
+            else:
+                # If no end marker, but we had a start, it could be that the LLM just prepended text
+                # and the rest is the document without a final fence. This is a heuristic.
+                # For now, if it started with a fence but didn't end with one, we might have an issue.
+                # Let's assume for now that if a start marker is found, an end marker should exist for a clean block.
+                # If only a start marker is found, the original stripping logic might be safer if it applied.
+                # Fallback to simple stripping if the complex extraction isn't clean.
+                stripped_md = md_content.strip()
+                if stripped_md.startswith(actual_start_marker) and stripped_md.endswith("```"):
+                    lines = stripped_md.split('\n')
+                    if lines:
+                        lines.pop(0)
+                    if lines and lines[-1].strip() == "```":
+                        lines.pop(-1)
+                    cleaned_md_content = "\n".join(lines)
+                # else: cleaned_md_content remains md_content or the result of the more specific extraction
+        else:
+            # No ```markdown or ``` start found, try simple stripping for just ```
+            stripped_md = md_content.strip()
+            if stripped_md.startswith("```") and stripped_md.endswith("```"):
+                lines = stripped_md.split('\n')
+                if lines: lines.pop(0) # remove first line
+                if lines and lines[-1].strip() == "```": lines.pop(-1) # remove last line
+                cleaned_md_content = "\n".join(lines)
+        # --- End of enhanced logic ---
+
         # --- DEBUG PRINT for cleaned_md_content --- #
         print("--- Cleaned MD Content for Markdown Parser ---")
         print(repr(cleaned_md_content)) # Use repr() to see exact string with newlines
