@@ -238,8 +238,11 @@ def load_prompt_templates():
     2. By default, use "Diagnoedge" as the sender/company name unless the user specifically requests a different sender.
     3. If you encounter Hindi or Devanagari script in the input, convert it to English (Roman script) in your output.
     4. Always format currency values consistently (e.g., ₹500.00 or Rs. 500).
-    5. Include proper headers, footers, and document structure.
-    
+    5. Calculate the necessary values like total, subtotal, GST and fill the columns accordingly.
+    6. Leave space for letterhead.
+    7. Don't have any heading for the document. It should never start with "##" or any other heading.
+    8. Include proper headers, footers, and document structure.
+    9. Use Bullet points for the terms and conditions.
     If information is missing for a standard document, you may make reasonable assumptions to create a usable draft and clearly state these assumptions at the beginning of your response, but NOT in the document itself (e.g., "I've assumed a quantity of 1 for items where not specified.").
     
     Avoid using generic placeholders like "[Customer Name]" unless the user specifically asks for a template structure. If details are missing, it's often better to omit the specific sub-field.
@@ -253,10 +256,14 @@ def load_prompt_templates():
     Here is an example of how to process a handwritten quotation:
     EXAMPLE INPUT: An image of a handwritten quotation, typically containing a recipient, sender, an itemized list in a table format with columns like 'Serial No.', 'Item', 'Price', 'GST', 'Final Amount', and a section for terms and conditions.
     EXAMPLE DESIRED OUTPUT (Markdown):
-    ## Page 1
-    
+
+    ```markdown
     <!-- Leave space for letterhead -->
-    
+
+
+
+
+
     To:
     The Superintendent
     Govt Ayurved Hospital
@@ -274,28 +281,34 @@ def load_prompt_templates():
     | 6          | A.S.O.                    | 1150  | 12% | 1288         |
     | 7          | Lancet                    | 85    | 12% | 95.2         |
 
+
     Terms and conditions:
-    1. Supply within 15 days after receiving the confirmed order in writing
-    2. Validity of Quotation is one month
-    3. 100% Payment in advanced
+    <ul>
+    <li>Supply within 15 days after receiving the confirmed order in writing</li>
+    <li>Validity of Quotation is one month</li>
+    <li>100% Payment in advanced</li>
+    </ul>
 
     Thanks and Regards
     Diagnoedge
     Charoda
+    ```
+    
     ---END OF EXAMPLE---
-    
     Now, analyze the following uploaded document (image or PDF), which is expected to be a {doc_type_name}.
-    Extract details and structure them clearly in the Markdown format shown.
+    Extract details and structure them clearly in the Markdown format shown in the EXAMPLE DESIRED OUTPUT.
     
-    IMPORTANT GUIDELINES:
+    IMPORTANT GUIDELINES based on the example:
     1. DO NOT include any comments, notes, or explanations in brackets within the final document.
-    2. By default, use "Diagnoedge" as the sender/company name unless clearly different in the document.
-    3. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
-    4. Ensure all itemized details, terms, and totals are captured accurately.
-    5. For sections like 'Terms and conditions', ensure each point is on a new line and correctly numbered if it's a list.
-    6. For concluding remarks like 'Thanks and Regards', ensure each part is on a new line.
+    2. Leave space for letterhead (as shown with the HTML comment and blank lines in the example).
+    3. The document should NOT start with a Markdown heading (e.g., ##).
+    4. By default, use "Diagnoedge" as the sender/company name unless clearly different in the document.
+    5. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
+    6. Ensure all itemized details, terms, and totals are captured accurately.
+    7. For 'Terms and conditions', format them as an HTML unordered list: start with <code>&lt;ul&gt;</code>, end with <code>&lt;/ul&gt;</code>, and wrap each item in <code>&lt;li&gt;...&lt;/li&gt;</code> tags, exactly as shown in the example.
+    8. For concluding remarks like 'Thanks and Regards', ensure each part (e.g., name, location) is on its own separate new line, as shown in the example.
     
-    The output should be a clean, professional document ready for PDF conversion. Output only the Markdown document.
+    The output must be a clean, professional Markdown document, ready for PDF conversion. Output only the Markdown document itself.
     """
     st.session_state['bill_extraction_prompt_template'] = """
     Analyze the uploaded document (image or PDF) of a handwritten {doc_type_name}.
@@ -308,10 +321,12 @@ def load_prompt_templates():
     
     IMPORTANT GUIDELINES:
     1. DO NOT include any comments, notes, or explanations in brackets within the final document.
-    2. By default, use "Diagnoedge" as the sender/company name unless clearly different in the document.
-    3. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
-    4. Format currency values consistently (e.g., ₹500.00 or Rs. 500).
-    5. Include proper headers and document structure.
+    2. Don't have any heading for the document. It should never start with "##" or any other heading.
+    3. Leave space for letterhead.
+    4. By default, use "Diagnoedge" as the sender/company name unless clearly different in the document.
+    5. If you encounter Hindi or Devanagari script, convert it to English (Roman script).
+    6. Format currency values consistently (e.g., ₹500.00 or Rs. 500).
+    7. Include proper headers and document structure.
     
     The output should be a clean, professional document ready for PDF conversion. Output only the Markdown document.
     """
